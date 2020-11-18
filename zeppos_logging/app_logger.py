@@ -13,10 +13,12 @@ class AppLogger:
 
     @staticmethod
     def configure_and_get_logger(logger_name=None, config_section_name=AppLoggerJsonConfigName.default_format_1(),
-                                 watchtower_log_group=None, watchtower_stream_name=None):
+                                 watchtower_log_group=None, watchtower_stream_name=None,
+                                 logging_level=logging.INFO):
         AppLogger.logger.debug(f"Configuring and getting logger: {logger_name}")
         AppLogger._configure_logger(config_section_name, watchtower_log_group, watchtower_stream_name)
         AppLogger.get_logger(logger_name)
+        AppLogger.set_level(logging_level)
         return AppLogger.logger
 
     @staticmethod
@@ -123,3 +125,27 @@ class AppLogger:
     def _add_filter():
         AppLogger.logger.debug("Add Filter")
         AppLogger.logger.addFilter(AppLoggerFilter())
+
+    @staticmethod
+    def set_level(logging_level):
+        AppLogger.logger.setLevel(logging_level)
+
+    @staticmethod
+    def set_debug_level():
+        AppLogger.set_level(logging.DEBUG)
+
+    @staticmethod
+    def set_info_level():
+        AppLogger.set_level(logging.INFO)
+
+    @staticmethod
+    def set_error_level():
+        AppLogger.set_level(logging.ERROR)
+
+    @staticmethod
+    def set_warning_level():
+        AppLogger.set_level(logging.WARNING)
+
+    @staticmethod
+    def set_critical_level():
+        AppLogger.set_level(logging.CRITICAL)
