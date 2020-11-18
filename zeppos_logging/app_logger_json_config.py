@@ -22,8 +22,7 @@ class AppLoggerJsonConfig:
             },
             "loggers": {},
             "root": {
-                "handlers": ["console"],
-                "level": "DEBUG"
+                "handlers": ["console"]
             }
         }
 
@@ -41,13 +40,13 @@ class AppLoggerJsonConfig:
                 },
                 "handlers": {
                     "console": {
-                        "level": "INFO",
+                        "level": "DEBUG",
                         "class": "logging.StreamHandler",
                         "formatter": "default-single-line",
                         "stream": "ext://sys.stdout"
                     },
                     "watchtower": {
-                        "level": "INFO",
+                        "level": "DEBUG",
                         "class": "watchtower.CloudWatchLogHandler",
                         "formatter": "default-single-line",
                         "log_group": "default_with_watchtower_format_1",
@@ -59,7 +58,6 @@ class AppLoggerJsonConfig:
                 "loggers": {},
                 "root": {
                     "handlers": ["console", "watchtower"],
-                    "level": "INFO"
                 }
             }
 
@@ -91,13 +89,13 @@ class AppLoggerJsonConfig:
                 },
                 "handlers": {
                     "console": {
-                        "level": "INFO",
+                        "level": "DEBUG",
                         "filters": ["require_debug_true", "app_logger_filter"],
                         "class": "logging.StreamHandler",
                         "formatter": "single-line"
                     },
                     "watchtower": {
-                        "level": "INFO",
+                        "level": "DEBUG",
                         "filters": ["app_logger_filter"],
                         "class": "watchtower.CloudWatchLogHandler",
                         "formatter": "json",
@@ -109,6 +107,5 @@ class AppLoggerJsonConfig:
                 },
                 "root": {
                     "handlers": ["console", "watchtower"],
-                    "level": "INFO"
                 }
             }

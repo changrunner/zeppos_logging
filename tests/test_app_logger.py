@@ -40,7 +40,7 @@ class test_the_app_logger_methods(unittest.TestCase):
             AppLogger._configure_logger()
             lc.check(
                 ('test_configure_1', 'DEBUG', 'Getting Config Section for [default_format_1]'),
-                ('test_configure_1', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '{name:<10s} | {levelname:8s} | {message:s}'}}, 'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}}, 'loggers': {}, 'root': {'handlers': ['console'], 'level': 'DEBUG'}}"),
+                ('test_configure_1', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '{name:<10s} | {levelname:8s} | {message:s}'}}, 'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}}, 'loggers': {}, 'root': {'handlers': ['console']}}"),
             )
 
 
@@ -53,7 +53,7 @@ class test_the_app_logger_methods(unittest.TestCase):
             AppLogger._configure_logger(AppLoggerJsonConfigName.default_with_watchtower_format_1()) #, 'test_log_group', 'test_log_stream')
             lc.check_present(
                 ('test_configure_2', 'DEBUG', 'Getting Config Section for [default_with_watchtower_format_1]'),
-                ('test_configure_2', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '[{asctime:s}.{msecs:3.0f}] | {client_ip} | {host_name} | {levelname:8s} | {name:<10s} | {funcName:<10s} | {lineno:4d} | {message:s}'}}, 'handlers': {'console': {'level': 'INFO', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}, 'watchtower': {'level': 'INFO', 'class': 'watchtower.CloudWatchLogHandler', 'formatter': 'default-single-line', 'log_group': 'default_with_watchtower_format_1', 'stream_name': 'default', 'send_interval': 1, 'create_log_group': 'True'}}, 'loggers': {}, 'root': {'handlers': ['console', 'watchtower'], 'level': 'INFO'}}"),
+                ('test_configure_2', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '[{asctime:s}.{msecs:3.0f}] | {client_ip} | {host_name} | {levelname:8s} | {name:<10s} | {funcName:<10s} | {lineno:4d} | {message:s}'}}, 'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}, 'watchtower': {'level': 'DEBUG', 'class': 'watchtower.CloudWatchLogHandler', 'formatter': 'default-single-line', 'log_group': 'default_with_watchtower_format_1', 'stream_name': 'default', 'send_interval': 1, 'create_log_group': 'True'}}, 'loggers': {}, 'root': {'handlers': ['console', 'watchtower']}}"),
             )
             self.assertEqual('default_with_watchtower_format_1', AppLogger.get_log_group())
             self.assertEqual('default', AppLogger.get_stream_name())
@@ -67,7 +67,7 @@ class test_the_app_logger_methods(unittest.TestCase):
             AppLogger._configure_logger(AppLoggerJsonConfigName.default_with_watchtower_format_1(), 'test_log_group', 'test_log_stream')
             lc.check_present(
                 ('test_configure_3', 'DEBUG', 'Getting Config Section for [default_with_watchtower_format_1]'),
-                ('test_configure_3', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '[{asctime:s}.{msecs:3.0f}] | {client_ip} | {host_name} | {levelname:8s} | {name:<10s} | {funcName:<10s} | {lineno:4d} | {message:s}'}}, 'handlers': {'console': {'level': 'INFO', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}, 'watchtower': {'level': 'INFO', 'class': 'watchtower.CloudWatchLogHandler', 'formatter': 'default-single-line', 'log_group': 'default_with_watchtower_format_1', 'stream_name': 'default', 'send_interval': 1, 'create_log_group': 'True'}}, 'loggers': {}, 'root': {'handlers': ['console', 'watchtower'], 'level': 'INFO'}}"),
+                ('test_configure_3', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '[{asctime:s}.{msecs:3.0f}] | {client_ip} | {host_name} | {levelname:8s} | {name:<10s} | {funcName:<10s} | {lineno:4d} | {message:s}'}}, 'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}, 'watchtower': {'level': 'DEBUG', 'class': 'watchtower.CloudWatchLogHandler', 'formatter': 'default-single-line', 'log_group': 'default_with_watchtower_format_1', 'stream_name': 'default', 'send_interval': 1, 'create_log_group': 'True'}}, 'loggers': {}, 'root': {'handlers': ['console', 'watchtower']}}"),
             )
             self.assertEqual('test_log_group', AppLogger.get_log_group())
             self.assertEqual('test_log_stream', AppLogger.get_stream_name())
@@ -204,59 +204,27 @@ class test_the_app_logger_methods(unittest.TestCase):
         AppLogger.config_dict = {'handlers': {'watchtower': {'stream_name': 'test2'}}}
         self.assertNotEqual(False, AppLogger._stream_name_exists())
 
-
-
-        # AppLogger._configure_logger(config_section_name=AppLoggerJsonConfigName.default_with_watchtower_format_1(),
-        #                             watchtower_log_group='test', watchtower_stream_name='local')
-        # self.assertEqual('test', AppLogger.get_log_group())
-
-    # def test_configure_logger_method(self):
-    #     """
-    #     Nothing doing any unit test because if will mess up the others. This should be covered by the others.
-    #     """
-    #     pass
+    # We are leaving this unittest commented because pytest seems to hang when it runs
+    # def test_set_logging_level_method(self):
+    #     AppLogger.configure_and_get_logger(
+    #         logger_name='test_logging_level',
+    #         logging_level=logging.INFO)
     #
-    # def test__get_dict_config_method(self):
-    #     self.assertEqual(AppLogger._get_dict_config(AppLoggerJsonConfigName.default_format_1())
-    #                      ['handlers']['console']['formatter'], "default-single-line")
-    #     self.assertEqual(AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1())
-    #                      ['handlers']['watchtower']['log_group'], "default_with_watchtower_format_1")
-    #     self.assertEqual(AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1())
-    #                      ['handlers']['watchtower']['stream_name'], "default")
-    #
-    #     self.assertEqual(AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1(), "test_log_group", "test_stream_name")
-    #                      ['handlers']['console']['formatter'], "default-single-line")
-    #     self.assertEqual(AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1(), "test_log_group", "test_stream_name")
-    #                      ['handlers']['watchtower']['log_group'], "test_log_group")
-    #     self.assertEqual(AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1(), "test_log_group", "test_stream_name")
-    #                      ['handlers']['watchtower']['stream_name'], "test_stream_name")
-    #
-    # def test_get_config_section_method(self):
-    #     self.assertEqual(AppLogger._get_config_section("default_with_watchtower_format_1")['handlers']['console']['formatter'], "default-single-line")
-    #
-    # def test__overwrite_logging_config_section_values_method(self):
-    #     """
-    #     Covert by other tests
-    #     """
-    #
-    # def test_get_log_group_method(self):
-    #     dict_config = AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1(),
-    #                                             "test_log_group", "test_stream_name")
-    #     self.assertEqual(AppLogger.get_log_group(dict_config), 'test_log_group')
-    #
-    # def test_get_stream_name_method(self):
-    #     dict_config = AppLogger._get_dict_config(AppLoggerJsonConfigName.default_with_watchtower_format_1(),
-    #                                              "test_log_group", "test_stream_name")
-    #     self.assertEqual(AppLogger.get_stream_name(dict_config), 'test_stream_name')
-    #
-    # def test_get_logger_method(self):
-    #     logger_test = AppLogger.get_logger("test_logger_method")
-    #     self.assertEqual(logger_test.name, "test_logger_method")
-    #
-    # def test_config_section_name_method(self):
-    #     self.assertEqual(AppLogger.get_config_section_name(), "not set")
-    #     AppLogger._set_config_section_name("it is set")
-    #     self.assertEqual(AppLogger.get_config_section_name(), "it is set")
+    #     with LogCapture() as lc:
+    #         AppLogger.logger.debug("debug test1")
+    #         AppLogger.logger.info("info test1")
+    #         AppLogger.logger.error("error test1")
+    #         AppLogger.set_level(logging.DEBUG)
+    #         AppLogger.logger.debug("debug test2")
+    #         AppLogger.logger.info("info test2")
+    #         AppLogger.logger.error("error test2")
+    #         lc.check(
+    #             ('test_logging_level', 'INFO', 'info test1'),
+    #             ('test_logging_level', 'ERROR', 'error test1'),
+    #             ('test_logging_level', 'DEBUG', 'debug test2'),
+    #             ('test_logging_level', 'INFO', 'info test2'),
+    #             ('test_logging_level', 'ERROR', 'error test2'),
+    #         )
 
 
 if __name__ == '__main__':
