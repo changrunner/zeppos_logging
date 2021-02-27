@@ -6,11 +6,14 @@ All you have to do is follow some configuration instructions and you will be up 
 
 ## Setup Instructions
 
-### pipenv
-```pipenv install zeppos_logging```
+### windows
+```python build_venv.py```
+
+### linux
+```python3 build_venv.py```
 
 ### AWS Logging
-- Install AWS CLI 2
+- [Install AWS CLI 2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 - Create AWS IAM user with token and access level of CloudWatch
 - Configure AWS
 
