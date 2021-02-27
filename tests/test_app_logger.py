@@ -18,18 +18,18 @@ class test_the_app_logger_methods(unittest.TestCase):
 
     # We are leaving this unittest commented because pytest seems to hang when it runs
     #   because we are going out to aws.
-    # def test_cloud_watch_logging_method(self):
-    #     AppLogger.configure_and_get_logger(
-    #         logger_name='test_cloud_watch',
-    #         config_section_name=AppLoggerJsonConfigName.default_with_watchtower_format_1(),
-    #         watchtower_log_group='test_log_group',
-    #         watchtower_stream_name='local'
-    #     )
-    #     with LogCapture() as lc:
-    #         AppLogger.logger.info("test_me_aws")
-    #         lc.check(
-    #             ('test_cloud_watch', 'INFO', 'test_me_aws'),
-    #         )
+    def test_cloud_watch_logging_method(self):
+        AppLogger.configure_and_get_logger(
+            logger_name='test_cloud_watch',
+            config_section_name=AppLoggerJsonConfigName.default_with_watchtower_format_1(),
+            watchtower_log_group='test_log_group',
+            watchtower_stream_name='local'
+        )
+        with LogCapture() as lc:
+            AppLogger.logger.info("test_me_aws")
+            lc.check(
+                ('test_cloud_watch', 'INFO', 'test_me_aws'),
+            )
 
     def test_1__configure_logger_method(self):
         AppLogger.logger = logging.getLogger('test_configure_1')
@@ -71,6 +71,15 @@ class test_the_app_logger_methods(unittest.TestCase):
             )
             self.assertEqual('test_log_group', AppLogger.get_log_group())
             self.assertEqual('test_log_stream', AppLogger.get_stream_name())
+
+    def test_4__configure_logger_method(self):
+        AppLogger.logger = logging.getLogger('test_configure_3')
+        AppLogger.logger.level = logging.DEBUG
+        AppLogger.config_dict = None
+
+        AppLogger._configure_logger(AppLoggerJsonConfigName.default_with_watchtower_format_1(), 'test_log_group', 'test_log_stream')
+        AppLogger.set_debug_level()
+        AppLogger.logger.debug('This is a test')
 
     def test__set_config_dict_method(self):
         AppLogger._set_config_dict('123')
@@ -205,26 +214,41 @@ class test_the_app_logger_methods(unittest.TestCase):
         self.assertNotEqual(False, AppLogger._stream_name_exists())
 
     # We are leaving this unittest commented because pytest seems to hang when it runs
-    # def test_set_logging_level_method(self):
-    #     AppLogger.configure_and_get_logger(
-    #         logger_name='test_logging_level',
-    #         logging_level=logging.INFO)
-    #
-    #     with LogCapture() as lc:
-    #         AppLogger.logger.debug("debug test1")
-    #         AppLogger.logger.info("info test1")
-    #         AppLogger.logger.error("error test1")
-    #         AppLogger.set_level(logging.DEBUG)
-    #         AppLogger.logger.debug("debug test2")
-    #         AppLogger.logger.info("info test2")
-    #         AppLogger.logger.error("error test2")
-    #         lc.check(
-    #             ('test_logging_level', 'INFO', 'info test1'),
-    #             ('test_logging_level', 'ERROR', 'error test1'),
-    #             ('test_logging_level', 'DEBUG', 'debug test2'),
-    #             ('test_logging_level', 'INFO', 'info test2'),
-    #             ('test_logging_level', 'ERROR', 'error test2'),
-    #         )
+    def test_set_logging_level_method(self):
+        AppLogger.configure_and_get_logger(
+            logger_name='test_logging_level',
+            logging_level=logging.INFO)
+
+        with LogCapture() as lc:
+            AppLogger.logger.debug("debug test1")
+            AppLogger.logger.info("info test1")
+            AppLogger.logger.error("error test1")
+            AppLogger.set_level(logging.DEBUG)
+            AppLogger.logger.debug("debug test2")
+            AppLogger.logger.info("info test2")
+            AppLogger.logger.error("error test2")
+            lc.check(
+                ('test_logging_level', 'INFO', 'info test1'),
+                ('test_logging_level', 'ERROR', 'error test1'),
+                ('test_logging_level', 'DEBUG', 'debug test2'),
+                ('test_logging_level', 'INFO', 'info test2'),
+                ('test_logging_level', 'ERROR', 'error test2'),
+            )
+
+    def test_set_logging_level_with_aws_logging_method(self):
+        AppLogger.configure_and_get_logger(
+            logger_name='test_logging_level',
+            config_section_name=AppLoggerJsonConfigName.default_with_watchtower_format_1(),
+            watchtower_log_group="test_log_group",
+            watchtower_stream_name="test_log_stream")
+
+        AppLogger.logger.debug("debug test1")
+        AppLogger.logger.info("info test1")
+        AppLogger.logger.error("error test1")
+        AppLogger.set_level(logging.DEBUG)
+        AppLogger.logger.debug("debug test2")
+        AppLogger.logger.info("info test2")
+        AppLogger.logger.error("error test2")
 
 
 if __name__ == '__main__':

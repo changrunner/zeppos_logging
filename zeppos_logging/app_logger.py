@@ -1,6 +1,5 @@
 import logging
 import logging.config
-from watchtower import CloudWatchLogHandler
 from zeppos_logging.app_logger_json_config import AppLoggerJsonConfig
 from zeppos_logging.app_logger_json_conifg_name import AppLoggerJsonConfigName
 from zeppos_logging.app_logger_filter import AppLoggerFilter
@@ -70,7 +69,6 @@ class AppLogger:
     def _set_logger(logger_name):
         if not AppLogger.logger or AppLogger.logger.name != logger_name:
             AppLogger.logger = logging.getLogger(logger_name)
-            AppLogger._add_handler()
             AppLogger._add_filter()
             AppLogger.logger.debug(f"set the logger to: {logger_name}")
 
@@ -115,11 +113,6 @@ class AppLogger:
                         if 'stream_name' in AppLogger.config_dict['handlers']['watchtower']:
                             return True
         return False
-
-    @staticmethod
-    def _add_handler():
-        AppLogger.logger.debug("Add Handler")
-        AppLogger.logger.addHandler(CloudWatchLogHandler())
 
     @staticmethod
     def _add_filter():
