@@ -25,6 +25,7 @@ class AppLogger:
                           watchtower_log_group=None, watchtower_stream_name=None):
         AppLogger._set_config_dict_for_config_section(config_section_name)
         AppLogger._overwrite_logging_config_section_values(watchtower_log_group, watchtower_stream_name)
+        # set the retrieved config_dict on the actual python logging object
         logging.config.dictConfig(AppLogger.config_dict)
 
     @staticmethod
