@@ -4,6 +4,7 @@ from zeppos_logging.app_logger_json_config import AppLoggerJsonConfig
 from zeppos_logging.app_logger_json_conifg_name import AppLoggerJsonConfigName
 from zeppos_logging.app_logger_filter import AppLoggerFilter
 
+
 class AppLogger:
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger()
@@ -13,18 +14,21 @@ class AppLogger:
     @staticmethod
     def configure_and_get_logger(logger_name=None, config_section_name=AppLoggerJsonConfigName.default_format_1(),
                                  watchtower_log_group=None, watchtower_stream_name=None,
-                                 logging_level=logging.INFO):
+                                 logging_level=logging.INFO, google_project_name=None):
         AppLogger.logger.debug(f"Configuring and getting logger: {logger_name}")
-        AppLogger._configure_logger(config_section_name, watchtower_log_group, watchtower_stream_name)
+        AppLogger._configure_logger(config_section_name, watchtower_log_group, watchtower_stream_name,
+                                    google_project_name, logger_name)
         AppLogger.get_logger(logger_name)
         AppLogger.set_level(logging_level)
         return AppLogger.logger
 
     @staticmethod
     def _configure_logger(config_section_name=AppLoggerJsonConfigName.default_format_1(),
-                          watchtower_log_group=None, watchtower_stream_name=None):
+                          watchtower_log_group=None, watchtower_stream_name=None,
+                          google_project_name=None, logger_name=None):
         AppLogger._set_config_dict_for_config_section(config_section_name)
-        AppLogger._overwrite_logging_config_section_values(watchtower_log_group, watchtower_stream_name)
+        AppLogger._overwrite_logging_config_section_values(watchtower_log_group, watchtower_stream_name,
+                                                           google_project_name, logger_name)
         # set the retrieved config_dict on the actual python logging object
         logging.config.dictConfig(AppLogger.config_dict)
 
@@ -43,6 +47,9 @@ class AppLogger:
                 if config_section_name.lower().strip() == AppLoggerJsonConfigName.django_with_watchtower_format_1():
                     AppLogger._set_config_dict(AppLoggerJsonConfig.django_with_watchtower_format_1())
                     return  # Circuit Breaker
+                if config_section_name.lower().strip() == AppLoggerJsonConfigName.default_with_google_cloud_format_1():
+                    AppLogger._set_config_dict(AppLoggerJsonConfig.default_with_google_cloud_format_1())
+                    return  # Circuit Breaker
         except:
             pass
 
@@ -57,9 +64,12 @@ class AppLogger:
         return config_dict
 
     @staticmethod
-    def _overwrite_logging_config_section_values(watchtower_log_group=None, watchtower_stream_name=None):
+    def _overwrite_logging_config_section_values(watchtower_log_group=None, watchtower_stream_name=None,
+                                                 google_project_name=None, logger_name=None):
         AppLogger._set_log_group(watchtower_log_group)
         AppLogger._set_stream_name(watchtower_stream_name)
+        AppLogger._set_google_project_name(google_project_name)
+        AppLogger._set_google_logger_name(logger_name)
 
     @staticmethod
     def get_logger(logger_name):
@@ -112,6 +122,48 @@ class AppLogger:
                 if 'handlers' in AppLogger.config_dict:
                     if 'watchtower' in AppLogger.config_dict['handlers']:
                         if 'stream_name' in AppLogger.config_dict['handlers']['watchtower']:
+                            return True
+        return False
+
+    @staticmethod
+    def get_google_project_name():
+        if AppLogger._google_project_name_exists():
+            return AppLogger.config_dict['handlers']['google_cloud']['project']
+        return None
+
+    @staticmethod
+    def _set_google_project_name(google_project_name):
+        if google_project_name and AppLogger.logger and AppLogger._google_project_name_exists():
+            AppLogger.config_dict['handlers']['google_cloud']['project'] = google_project_name
+
+    @staticmethod
+    def _google_project_name_exists():
+        if AppLogger.config_dict:
+            if isinstance(AppLogger.config_dict, dict):
+                if 'handlers' in AppLogger.config_dict:
+                    if 'google_cloud' in AppLogger.config_dict['handlers']:
+                        if 'project' in AppLogger.config_dict['handlers']['google_cloud']:
+                            return True
+        return False
+
+    @staticmethod
+    def get_google_logger_name():
+        if AppLogger._google_logger_name_exists():
+            return AppLogger.config_dict['handlers']['google_cloud']['log_name']
+        return None
+
+    @staticmethod
+    def _set_google_logger_name(google_logger_name):
+        if google_logger_name and AppLogger.logger and AppLogger._google_logger_name_exists():
+            AppLogger.config_dict['handlers']['google_cloud']['log_name'] = google_logger_name
+
+    @staticmethod
+    def _google_logger_name_exists():
+        if AppLogger.config_dict:
+            if isinstance(AppLogger.config_dict, dict):
+                if 'handlers' in AppLogger.config_dict:
+                    if 'google_cloud' in AppLogger.config_dict['handlers']:
+                        if 'log_name' in AppLogger.config_dict['handlers']['google_cloud']:
                             return True
         return False
 

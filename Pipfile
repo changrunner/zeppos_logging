@@ -3,6 +3,11 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+name = "test_pypi"
+url = "https://test.pypi.org/simple"
+verify_ssl = true
+
 [dev-packages]
 setuptools = ">=49.6.0"
 wheel = ">=0.35.1"
@@ -15,6 +20,7 @@ testfixtures = ">=6.15.0"
 watchtower = ">=0.8.0"
 deprecated = ">=1.2.10"
 cachetools = ">=4.1.1"
+zeppos-log-handler-google-cloud = ">=0.0.4"
 
 [requires]
 python_version = "3.8"

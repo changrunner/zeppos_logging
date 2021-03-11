@@ -4,6 +4,8 @@ from zeppos_logging.app_logger_json_conifg_name import AppLoggerJsonConfigName
 from testfixtures import LogCapture
 import logging
 import logging.config
+from datetime import datetime
+
 
 class test_the_app_logger_methods(unittest.TestCase):
     def test_simple_logging_method(self):
@@ -16,8 +18,6 @@ class test_the_app_logger_methods(unittest.TestCase):
                 ('test_simple', 'INFO', 'test_me_simple'),
             )
 
-    # We are leaving this unittest commented because pytest seems to hang when it runs
-    #   because we are going out to aws.
     def test_cloud_watch_logging_method(self):
         AppLogger.configure_and_get_logger(
             logger_name='test_cloud_watch',
@@ -42,7 +42,6 @@ class test_the_app_logger_methods(unittest.TestCase):
                 ('test_configure_1', 'DEBUG', 'Getting Config Section for [default_format_1]'),
                 ('test_configure_1', 'DEBUG', "Set logging configuration to: {'version': 1, 'disable_existing_loggers': 'false', 'formatters': {'default-single-line': {'style': '{', 'datefmt': '%Y-%m-%dT%H:%M:%S', 'format': '{name:<10s} | {levelname:8s} | {message:s}'}}, 'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler', 'formatter': 'default-single-line', 'stream': 'ext://sys.stdout'}}, 'loggers': {}, 'root': {'handlers': ['console']}}"),
             )
-
 
     def test_2__configure_logger_method(self):
         AppLogger.logger = logging.getLogger('test_configure_2')
@@ -249,6 +248,111 @@ class test_the_app_logger_methods(unittest.TestCase):
         AppLogger.logger.debug("debug test2")
         AppLogger.logger.info("info test2")
         AppLogger.logger.error("error test2")
+
+    def test_google_cloud_logging_method(self):
+        AppLogger.configure_and_get_logger(
+            logger_name='test_google',
+            config_section_name=AppLoggerJsonConfigName.default_with_google_cloud_format_1(),
+            google_project_name='sandbox'
+        )
+        self.assertEqual('sandbox', AppLogger.get_google_project_name())
+
+        with LogCapture() as lc:
+            data = {"data": "{'field1': 'test1', 'field2': 'test2'}"}
+            AppLogger.logger.info(f"test_me_gcp", extra=data)
+            lc.check(
+                ('test_google', 'INFO', 'test_me_gcp'),
+            )
+
+    def test_get_google_project_name_method(self):
+        AppLogger.config_dict = None
+        self.assertEqual(None, AppLogger.get_google_project_name())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'project': 'test'}}}
+        self.assertEqual('test', AppLogger.get_google_project_name())
+
+        AppLogger.config_dict = {'handlers': ''}
+        self.assertEqual(None, AppLogger.get_google_project_name())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': ''}}
+        self.assertEqual(None, AppLogger.get_google_project_name())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'project': 'test2'}}}
+        self.assertNotEqual('test', AppLogger.get_google_project_name())
+
+    def test__set_google_project_name(self):
+        AppLogger.config_dict = None
+        AppLogger._set_google_project_name('test')
+        self.assertEqual(None, AppLogger.config_dict)
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'project': 'test1'}}}
+        AppLogger._set_google_project_name('test2')
+        self.assertEqual({'handlers': {'google_cloud': {'project': 'test2'}}}, AppLogger.config_dict)
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'project': 'test1'}}}
+        AppLogger._set_google_project_name(None)
+        self.assertEqual({'handlers': {'google_cloud': {'project': 'test1'}}}, AppLogger.config_dict)
+
+    def test__google_project_name_exists_method(self):
+        AppLogger.config_dict = None
+        self.assertEqual(False, AppLogger._google_project_name_exists())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'project': 'test'}}}
+        self.assertEqual(True, AppLogger._google_project_name_exists())
+
+        AppLogger.config_dict = {'handlers': ''}
+        self.assertEqual(False, AppLogger._google_project_name_exists())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': ''}}
+        self.assertEqual(False, AppLogger._google_project_name_exists())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'project': 'test2'}}}
+        self.assertNotEqual(False, AppLogger._google_project_name_exists())
+
+    def test_get_google_logger_name_method(self):
+        AppLogger.config_dict = None
+        self.assertEqual(None, AppLogger.get_google_logger_name())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'log_name': 'test'}}}
+        self.assertEqual('test', AppLogger.get_google_logger_name())
+
+        AppLogger.config_dict = {'handlers': ''}
+        self.assertEqual(None, AppLogger.get_google_logger_name())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': ''}}
+        self.assertEqual(None, AppLogger.get_google_logger_name())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'log_name': 'test2'}}}
+        self.assertNotEqual('test', AppLogger.get_google_logger_name())
+
+    def test__set_google_logger_name(self):
+        AppLogger.config_dict = None
+        AppLogger._set_google_logger_name('test')
+        self.assertEqual(None, AppLogger.config_dict)
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'log_name': 'test1'}}}
+        AppLogger._set_google_logger_name('test2')
+        self.assertEqual({'handlers': {'google_cloud': {'log_name': 'test2'}}}, AppLogger.config_dict)
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'log_name': 'test1'}}}
+        AppLogger._set_google_logger_name(None)
+        self.assertEqual({'handlers': {'google_cloud': {'log_name': 'test1'}}}, AppLogger.config_dict)
+
+    def test__google_logger_name_exists_method(self):
+        AppLogger.config_dict = None
+        self.assertEqual(False, AppLogger._google_logger_name_exists())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'log_name': 'test'}}}
+        self.assertEqual(True, AppLogger._google_logger_name_exists())
+
+        AppLogger.config_dict = {'handlers': ''}
+        self.assertEqual(False, AppLogger._google_logger_name_exists())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': ''}}
+        self.assertEqual(False, AppLogger._google_logger_name_exists())
+
+        AppLogger.config_dict = {'handlers': {'google_cloud': {'log_name': 'test2'}}}
+        self.assertNotEqual(False, AppLogger._google_logger_name_exists())
 
 
 if __name__ == '__main__':

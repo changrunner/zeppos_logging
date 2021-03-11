@@ -109,3 +109,41 @@ class AppLoggerJsonConfig:
                     "handlers": ["console", "watchtower"],
                 }
             }
+
+    @staticmethod
+    def default_with_google_cloud_format_1():
+        return {
+            "version": 1,
+            "disable_existing_loggers": "false",
+            "formatters": {
+                "single-line": {
+                    "style": "{",
+                    "datefmt": "%Y-%m-%dT%H:%M:%S",
+                    "format": "[{asctime:s}.{msecs:3.0f}] | {client_ip} | {host_name} |  {levelname:8s} | {name:<10s} | {funcName:<10s} | {lineno:4d} | {message:s} | {data:s}"
+                },
+                "google-single-line": {
+                    "style": "{",
+                    "datefmt": "%Y-%m-%dT%H:%M:%S",
+                    "format": "{{\"message\":\"{message:s}\",\"data\":\"{data:s}\",\"client_ip\":\"{client_ip:s}\",\"host_name\":\"{host_name:s}\" }}"
+                }
+            },
+            "handlers": {
+                "console": {
+                    "level": "DEBUG",
+                    "class": "logging.StreamHandler",
+                    "formatter": "single-line",
+                    "stream": "ext://sys.stdout"
+                },
+                "google_cloud": {
+                    "level": "DEBUG",
+                    "class": "zeppos_log_handler_google_cloud.GoogleCloudLogHandler",
+                    "formatter": "google-single-line",
+                    "project": "default",
+                    "log_name": "unknown"
+                }
+            },
+            "loggers": {},
+            "root": {
+                "handlers": ["console", "google_cloud"],
+            }
+        }
